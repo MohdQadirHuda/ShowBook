@@ -110,7 +110,7 @@ import {
             <View style={{ marginLeft: 10 }}>
               <Text style={{ fontSize: 15, fontWeight: "500" }}>DATE & TIME</Text>
               <Text style={{ marginTop: 6, fontSize: 15 }}>
-                {route.params.showtime}
+              {route.params.date} | {route.params.showtime}
               </Text>
             </View>
             <Image

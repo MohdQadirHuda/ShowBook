@@ -11,8 +11,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import RazorpayCheckout from "react-native-razorpay";
 import { client } from "../showbook-movies/sanity";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
+import { app } from "../store";
+import { err } from "react-native-svg";
 
 const ConfirmationScreen = () => {
+  const authKey = useSelector((state) => state.login.authKey);
+
   const route = useRoute();
   const navigation = useNavigation();
   console.log(route.params);
@@ -64,7 +70,7 @@ const ConfirmationScreen = () => {
       currency: "INR",
       name: "SHOWBOOK",
       key: "rzp_test_vvNplPXKnwBu2h",
-      amount: grandTotal ,
+      amount: grandTotal * 100,
       prefill: {
         email: "Mqh4862@gmail.com",
         contact: "7298632786",
@@ -91,24 +97,42 @@ const ConfirmationScreen = () => {
           })
           .commit()
           .then((updatedDoc) => {
-            console.log("updated doc: ",updatedDoc)
-          }).catch((err) => {
-            console.log("update failed",err)
+            console.log("updated doc: ", updatedDoc);
           })
+          .catch((err) => {
+            console.log("update failed", err);
+          });
         updatedRows[rowIndex].seats[seatIndex].bookingStatus = "disabled";
       });
 
-      const seatNumbers = route.params.selectedSeats.map((seat) => seat.row + seat.seat);
+      const seatNumbers = route.params.selectedSeats.map(
+        (seat) => seat.row + seat.seat
+      );
 
       const result = seatNumbers.join(" ");
+      console.log("res", result);
+      const db = getFirestore(app);
 
-      navigation.navigate("Ticket",{
+      console.log(route.params.mall,
+        route.params.showtime,
+        route.params.selectedDate,
+        route.params.selectedSeats,)
+
+      // Add a new document with a generated id.
+      addDoc(collection(db, "bookedCTickets"), {
+        mall: route.params.mall,
+        showtime: route.params.showtime,
+        date: route.params.selectedDate,
+        seats: route.params.selectedSeats,
+      }).then((docRef) => console.log("Document written with ID: ", docRef.id));
+
+      navigation.navigate("Ticket", {
         selectedSeats: result,
         mall: route.params.mall,
         showtime: route.params.showtime,
-        date: route.params.date,
+        date: route.params.selectedDate,
         seats: route.params.selectedSeats,
-      })
+      });
     });
   };
   return (
@@ -169,7 +193,7 @@ const ConfirmationScreen = () => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontSize: 16,fontWeight: "500" }}>TOTAL</Text>
+          <Text style={{ fontSize: 16, fontWeight: "500" }}>TOTAL</Text>
           <Text style={{ fontWeight: "bold", fontSize: 17 }}>
             ₹{grandTotal}
           </Text>

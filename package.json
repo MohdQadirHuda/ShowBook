@@ -33,6 +33,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.6",
     "react-redux": "^9.1.1",
+    "sync-storage": "^0.4.2",
     "url-search-params-polyfill": "^8.2.5"
   },
   "devDependencies": {

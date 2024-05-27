@@ -4,13 +4,16 @@ export const loginSlice = createSlice({
     name:'login',
     initialState:{
         data:false,
+        authKey: null,
     },
     reducers:{
         logIN:(state,action) => {
             state.data = true;
+            state.authKey = action.payload;
         },
         logOUT:(state,action) => {
             state.data = false;
+            state.authKey = null;
         },
     }
 })

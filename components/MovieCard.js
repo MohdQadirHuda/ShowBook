@@ -17,6 +17,7 @@ const MovieCard = ({ item }) => {
   const isCitySelected = useSelector((state) => state.city);
 
   useEffect(() => {
+    console.log("MovieItem Is",item);
     console.log("isLOGIN: ", isLOGIN.data);
     console.log("isCitySelected: ", isCitySelected.data);
   }, [isLOGIN,  isCitySelected]);
@@ -48,7 +49,7 @@ const MovieCard = ({ item }) => {
 
         <View>
           <Text style={{ marginTop: 6, fontSize: 15, fontWeight: "400" }}>
-            {item.title.substr(0, 20)}
+            {item?.title?.substr(0, 20)}
           </Text>
 
           <Text

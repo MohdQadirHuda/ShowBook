@@ -534,7 +534,7 @@ const HomeScreen = () => {
         contentContainerStyle={{ justifyContent: "space-between" }}
         ListHeaderComponent={Header}
         data={sortedData}
-        renderItem={({ item, index }) => <MovieCard item={item} key={index} />}
+        renderItem={({ item, index }) =>  <MovieCard item={item} key={index} />}
       />
       <Pressable
         onPress={() => setModalVisible(!modalVisible)}

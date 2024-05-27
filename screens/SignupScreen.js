@@ -7,7 +7,6 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { initializeApp } from "@firebase/app";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -17,20 +16,10 @@ import {
 } from "@firebase/auth";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { logIN, logOUT } from "../loginReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetCityState } from "../cityReducer";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCs1XST5ISqeQLiAcV6zmb7tEf0dKkiuqY",
-  authDomain: "showbook-48dac.firebaseapp.com",
-  projectId: "showbook-48dac",
-  storageBucket: "showbook-48dac.appspot.com",
-  messagingSenderId: "496657551876",
-  appId: "1:496657551876:web:442b4a7e6672fcfbb21b51",
-  measurementId: "G-SWTD6R1YXV",
-};
-
-const app = initializeApp(firebaseConfig);
+import { app } from "../store";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 
 const AuthScreen = ({
   email,
@@ -95,6 +84,36 @@ export default App = () => {
   const [user, setUser] = useState(null); // Track user authentication state
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch();
+  const state = useSelector((state) => state.login);
+
+  const filterTickets = (tickets) => {
+    return tickets.filter((ticket) => ticket.userID == state.authKey);
+  };
+
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
+
+  const [ticketsList, setTicketsList] = useState([]);
+  useEffect(() => {
+    const fetchTickets = () => {
+      const db = getFirestore(app);
+      getDocs(collection(db, "bookedCTickets"))
+        .then((ticketsCollection) => {
+          const tickets = ticketsCollection.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setTicketsList(tickets);
+        })
+        .catch((error) => {
+          console.error("Error fetching tickets:", error);
+        });
+    };
+    fetchTickets();
+
+    console.log("filter", filterTickets(ticketsList));
+  }, []);
 
   const auth = getAuth(app);
   useEffect(() => {
@@ -105,8 +124,8 @@ export default App = () => {
     return () => unsubscribe();
   }, [auth]);
 
-  const makeLoginCall = () => {
-    dispatch(logIN());
+  const makeLoginCall = (ID) => {
+    dispatch(logIN(ID));
   };
 
   const makeLogoutCall = () => {
@@ -124,8 +143,10 @@ export default App = () => {
         // Sign in or sign up
         if (isLogin) {
           // Sign in
-          await signInWithEmailAndPassword(auth, email, password);
-          makeLoginCall();
+          let result = await signInWithEmailAndPassword(auth, email, password);
+          // console.log("Auth login: ",result?.user?.uid);
+          let ID = result?.user?.uid;
+          makeLoginCall(ID);
           console.log("User signed in successfully!");
         } else {
           // Sign up
@@ -134,7 +155,9 @@ export default App = () => {
             email,
             password
           );
-          makeLoginCall();
+          // console.log("Auth login: ",data?.user?.uid);
+          let ID = data?.user?.uid;
+          makeLoginCall(ID);
           console.log(data);
           console.log("User created successfully!");
         }

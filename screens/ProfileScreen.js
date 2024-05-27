@@ -1,24 +1,27 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { app } from "../store";
 
 const ProfileScreen = () => {
+
   return (
     <View style={styles.container}>
       <View style={styles.profileSection}>
         <Image
-          source={require('../assets/defprof.jpg')} // Replace with actual profile picture source
+          source={require("../assets/defprof.jpg")} // Replace with actual profile picture source
           style={styles.profilePicture}
         />
         <Text style={styles.username}>John Doe</Text>
         <Text style={styles.bio}>Movie ticket Booking App</Text>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>My Tickets</Text>
         {/* Placeholder text for My Tickets */}
         <Text>No tickets available</Text>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Payment Methods</Text>
         {/* Placeholder text for Payment Methods */}
@@ -37,7 +40,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   profileSection: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   profilePicture: {
@@ -48,12 +51,12 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   bio: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: 20,
   },
   section: {
@@ -61,7 +64,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
 });
